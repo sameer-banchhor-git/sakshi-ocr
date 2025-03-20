@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hindi OCR App - Feedback</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container" id="app-container">
+    <header>
+      <nav>
+        <a href="index.html">OCR App</a>
+        <a href="features.html">Key Features</a>
+        <a href="feedback.html" class="active">Feedback</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+      <h1>Hindi OCR Application</h1>
+      <p class="subtitle">Share your feedback to help us improve</p>
+      <p class="attribution">Powered by Sakshi's Hindi OCR Engine</p>
+      <!-- Logout button remains if you want to simulate logout behavior -->
+      <button id="logoutButton" class="logout-button button-secondary">Logout</button>
+    </header>
+
+    <div class="main-content">
+      <div class="card" id="feedback">
+        <h2 class="card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.782 0 9-3.224 9-7.5A4.5 4.5 0 0016.5 9V3.75a2.25 2.25 0 00-2.25-2.25H7.875a2.25 2.25 0 00-2.25 2.25V9a4.5 4.5 0 00-4.5 4.5c0 4.276 4.218 7.5 9 7.5zm0-17.25v-.75A2.25 2.25 0 0114.25 2.25H16.5a2.25 2.25 0 012.25 2.25V5.25a2.25 2.25 0 01-2.25 2.25H14.25a2.25 2.25 0 01-2.25-2.25z" />
+          </svg>
+          Feedback
+        </h2>
+        <div class="feedback-form">
+          <p>We appreciate your feedback! Please let us know your thoughts on the application.</p>
+          <textarea id="feedbackText" placeholder="Your feedback here..."></textarea>
+          <button id="submitFeedback" class="button-secondary">Submit Feedback</button>
+          <p class="info-text" id="feedbackMessage"></p>
+        </div>
+        <!-- Removed login status message as login is not required -->
+      </div>
+    </div>
+
+    <div class="credits">
+      <p>
+        Powered by <strong>D SAKSHI</strong> (MCA Final Year BIT Durg, Chhattisgarh) |
+        © SlimShadow Org. All Rights Reserved.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'https://sameernotes-ocr.hf.space';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const logoutButton = document.getElementById('logoutButton');
+      const submitFeedbackButton = document.getElementById('submitFeedback');
+      const feedbackText = document.getElementById('feedbackText');
+      const feedbackMessage = document.getElementById('feedbackMessage');
+
+      // Remove login simulation functionality since login is not required for feedback.
+      // If you still want a logout button to simulate session clear, you can use the code below.
+      logoutButton.addEventListener('click', () => {
+        // Simply clear any stored data if needed.
+        feedbackMessage.textContent = "You are now logged out (simulated).";
+        feedbackMessage.style.color = "blue";
+      });
+
+      // Feedback Submission without requiring a login token
+      submitFeedbackButton.addEventListener('click', async () => {
+        const comment = feedbackText.value.trim();
+
+        if (!comment) {
+          feedbackMessage.textContent = 'Please enter your feedback.';
+          feedbackMessage.style.color = 'red';
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/feedback/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+              // Removed Authorization header so that anyone can submit feedback
+            },
+            // Default the username to "Anonymous"
+            body: JSON.stringify({ username: "Anonymous", comment: comment })
+          });
+
+          if (response.ok) {
+            feedbackMessage.textContent = 'Feedback submitted successfully! Thank you.';
+            feedbackMessage.style.color = 'green';
+            feedbackText.value = '';
+          } else {
+            const errorData = await response.json();
+            feedbackMessage.textContent = `Error: ${errorData.detail || 'Failed to submit feedback.'}`;
+            feedbackMessage.style.color = 'red';
+          }
+        } catch (error) {
+          feedbackMessage.textContent = "Error submitting feedback. Please try again.";
+          feedbackMessage.style.color = 'red';
+          console.error("Feedback submission error:", error);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

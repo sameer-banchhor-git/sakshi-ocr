@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hindi OCR App - Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .admin-table th, .admin-table td {
+            border: 1px solid var(--gray-200);
+            padding: 8px;
+            text-align: left;
+        }
+        .admin-table th {
+            background-color: var(--gray-100);
+            font-weight: bold;
+        }
+        .admin-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="admin-app-container" style="display: none;">
+        <header>
+            <nav>
+                <a href="index.html">OCR App</a>
+                <a href="features.html" target="_blank">Key Features</a>
+                <a href="feedback.html" target="_blank">Feedback</a>
+                <a href="contact.html" target="_blank">Contact Us</a>
+                <a href="admin.html" class="active">Admin Panel</a>
+            </nav>
+            <h1>Hindi OCR Admin Panel</h1>
+            <p class="subtitle">Manage users and feedback for the Hindi OCR Application</p>
+            <p class="attribution">Powered by Sakshi's Hindi OCR Engine</p>
+            <button id="adminLogoutButton" class="logout-button button-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                    <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                </svg>
+                Logout
+            </button>
+        </header>
+
+        <div class="main-content">
+            <div class="card">
+                <h2 class="card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.332 9.332 0 001.62-.044 9.39 9.39 0 00-.03-.5c.055-1.15.055-2.315-.05-3.46a9.39 9.39 0 00-1.65+.044 9.38 9.38 0 00-2.625-.372m-6 0a9.38 9.38 0 00-2.625.372 9.332 9.332 0 00-1.62-.044 9.39 9.39 0 00.03-.5c-.055-1.15-.055-2.315.05-3.46a9.39 9.39 0 001.65+.044 9.38 9.38 0 002.625-.372m12 0c.173.017.348.034.523.05m-12 0c-.173.017-.348.034-.523.05M3 16.5a9 9 0 1018 0m-13.5.255c-.034.414-.086.827-.16 1.24a6.32 6.32 0 01-.618 1.628c-.31.648-.832 1.169-1.485 1.595-.653.426-1.447.773-2.337 1.008a.75.75 0 10.195 1.487c.99-.28.195 1.487.79 1.134a9.75 9.75 0 003.254-1.636c.699-.463 1.18-1.08 1.4-1.842a11.4 11.4 0 00.255-1.938m-8.25-.255a9 9 0 0116.5-2.75m-16.5 2.75c.034.414.086.827.16 1.24a6.32 6.32 0 01.618 1.628c.31.648.832 1.169 1.485 1.595.653.426 1.447.773 2.337 1.008a.75.75 0 10.195 1.487c-.99-.28-1.952-.627-2.942-.907a9.75 9.75 0 00-3.254-1.636c-.699-.463-1.18-1.08-1.4-1.842a11.4 11.4 0 00-.255-1.938" />
+                    </svg>
+                    User Management
+                </h2>
+                <div class="error-message" id="userErrorMessage" style="display:none;"></div>
+                <table class="admin-table" id="userTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Is Active</th>
+                            <th>Is Admin</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <tr><td colspan="6">Loading users...</td></tr>
+                    </tbody>
+                </table>
+                <div class="admin-buttons" id="userPagination">
+                    <button id="prevUsers" disabled>< Previous</button>
+                    <button id="nextUsers">Next ></button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0l3 3m-3-3h12.75m-7.5-3a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0l3 3m-3-3h-1.5m-9 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0l3 3m-3-3h12.75" />
+                    </svg>
+                    Feedback Management
+                </h2>
+                <div class="error-message" id="feedbackErrorMessage" style="display:none;"></div>
+                <table class="admin-table" id="feedbackTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Comment</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feedbackTableBody">
+                        <tr><td colspan="4">Loading feedback...</td></tr>
+                    </tbody>
+                </table>
+                <div class="admin-buttons" id="feedbackPagination">
+                    <button id="prevFeedback" disabled>< Previous</button>
+                    <button id="nextFeedback">Next ></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="credits">
+            <p>Powered by <strong>D SAKSHI</strong> (MCA Final Year BIT Durg, Chhattisgarh) | © SlimShadow Org. All Rights Reserved.</p>
+        </div>
+    </div>
+
+    <div id="login-container">
+        <div class="auth-card" id="admin-login-card">
+            <h1>Hindi OCR Admin</h1>
+            <h2>Admin Login</h2>
+            <p>Login to access the Admin Panel.</p>
+            <div class="error-message" id="adminLoginErrorMessage" style="display:none;"></div>
+            <input type="text" id="adminUsername" placeholder="Username" value="admin">
+            <input type="password" id="adminPassword" placeholder="Password" value="adminpassword">
+            <button id="adminLoginButton">Login</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://sameernotes-ocr.hf.space';
+        let adminAccessToken = null;
+        const adminAppContainer = document.getElementById('admin-app-container');
+        const loginContainer = document.getElementById('login-container');
+        const adminLoginCard = document.getElementById('admin-login-card');
+
+        // Admin Login Elements
+        const adminUsernameInput = document.getElementById('adminUsername');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const adminLoginButton = document.getElementById('adminLoginButton');
+        const adminLoginErrorMessage = document.getElementById('adminLoginErrorMessage');
+        const adminLogoutButton = document.getElementById('adminLogoutButton');
+
+        // User Table Elements
+        const userTableBody = document.getElementById('userTableBody');
+        const userErrorMessage = document.getElementById('userErrorMessage');
+        const prevUsersButton = document.getElementById('prevUsers');
+        const nextUsersButton = document.getElementById('nextUsers');
+        let currentUserPage = 0;
+        const usersPerPage = 5; // Adjust as needed
+
+        // Feedback Table Elements
+        const feedbackTableBody = document.getElementById('feedbackTableBody');
+        const feedbackErrorMessage = document.getElementById('feedbackErrorMessage');
+        const prevFeedbackButton = document.getElementById('prevFeedback');
+        const nextFeedbackButton = document.getElementById('nextFeedback');
+        let currentFeedbackPage = 0;
+        const feedbackPerPage = 5; // Adjust as needed
+
+
+        adminLoginButton.addEventListener('click', async () => {
+            const username = adminUsernameInput.value;
+            const password = adminPasswordInput.value;
+
+            const formData = new URLSearchParams();
+            formData.append('username', username);
+            formData.append('password', password);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData.toString()
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    adminLoginErrorMessage.textContent = errorData.detail || "Login failed";
+                    adminLoginErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                const data = await response.json();
+                adminAccessToken = data.access_token;
+                loginContainer.style.display = 'none';
+                adminAppContainer.style.display = 'block';
+                adminLoginErrorMessage.style.display = 'none';
+                loadUsers(); // Load users table after login
+                loadFeedback(); // Load feedback table after login
+
+
+            } catch (error) {
+                adminLoginErrorMessage.textContent = "Error during login. Please try again.";
+                adminLoginErrorMessage.style.display = 'block';
+                console.error("Admin Login error:", error);
+            }
+        });
+
+        adminLogoutButton.addEventListener('click', () => {
+            adminAccessToken = null;
+            adminAppContainer.style.display = 'none';
+            loginContainer.style.display = 'flex';
+        });
+
+
+        async function loadUsers() {
+            userTableBody.innerHTML = '<tr><td colspan="6">Loading users...</td></tr>';
+            userErrorMessage.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/users/?skip=${currentUserPage * usersPerPage}&limit=${usersPerPage}`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminAccessToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        userErrorMessage.textContent = "Unauthorized: Admin access required.";
+                    } else {
+                        userErrorMessage.textContent = `Failed to load users. Status: ${response.status}`;
+                    }
+                    userErrorMessage.style.display = 'block';
+                    userTableBody.innerHTML = '<tr><td colspan="6">Error loading users.</td></tr>';
+                    return;
+                }
+
+                const users = await response.json();
+                if (users.length === 0 && currentUserPage > 0) {
+                    currentUserPage--; // Adjust page if no users on current page and not on first page
+                    await loadUsers(); // Reload users with adjusted page
+                    return;
+                }
+                populateUserTable(users);
+
+
+            } catch (error) {
+                userErrorMessage.textContent = "Error loading users. Please check console.";
+                userErrorMessage.style.display = 'block';
+                userTableBody.innerHTML = '<tr><td colspan="6">Error loading users.</td></tr>';
+                console.error("Error fetching users:", error);
+            }
+        }
+
+        function populateUserTable(users) {
+            userTableBody.innerHTML = '';
+            if (users.length === 0) {
+                userTableBody.innerHTML = '<tr><td colspan="6">No users found.</td></tr>';
+                return;
+            }
+
+            users.forEach(user => {
+                const row = userTableBody.insertRow();
+                row.insertCell(0).textContent = user.id;
+                row.insertCell(1).textContent = user.username;
+                row.insertCell(2).textContent = user.email;
+                row.insertCell(3).textContent = user.is_active ? 'Yes' : 'No';
+                row.insertCell(4).textContent = user.is_admin ? 'Yes' : 'No';
+                const actionsCell = row.insertCell(5);
+                actionsCell.innerHTML = `<button class="button-secondary" onclick="deleteUser(${user.id})">Delete</button>`;
+            });
+
+            // Update pagination button states
+            prevUsersButton.disabled = currentUserPage === 0;
+            nextUsersButton.disabled = users.length < usersPerPage; // Disable if fewer users than per page, assuming last page
+        }
+
+        prevUsersButton.addEventListener('click', async () => {
+            if (currentUserPage > 0) {
+                currentUserPage--;
+                await loadUsers();
+            }
+        });
+
+        nextUsersButton.addEventListener('click', async () => {
+            currentUserPage++;
+            await loadUsers();
+        });
+
+
+        async function deleteUser(userId) {
+            if (confirm(`Are you sure you want to delete user ID ${userId}?`)) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${adminAccessToken}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        userErrorMessage.textContent = errorData.detail || `Failed to delete user. Status: ${response.status}`;
+                        userErrorMessage.style.display = 'block';
+                        return;
+                    }
+
+                    userErrorMessage.style.display = 'none';
+                    alert(`User ID ${userId} deleted successfully.`);
+                    loadUsers(); // Reload user list
+                } catch (error) {
+                    userErrorMessage.textContent = "Error deleting user. Please check console.";
+                    userErrorMessage.style.display = 'block';
+                    console.error("Error deleting user:", error);
+                }
+            }
+        }
+
+
+        async function loadFeedback() {
+            feedbackTableBody.innerHTML = '<tr><td colspan="4">Loading feedback...</td></tr>';
+            feedbackErrorMessage.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/feedback/?skip=${currentFeedbackPage * feedbackPerPage}&limit=${feedbackPerPage}`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminAccessToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        feedbackErrorMessage.textContent = "Unauthorized access.";
+                    } else {
+                        feedbackErrorMessage.textContent = `Failed to load feedback. Status: ${response.status}`;
+                    }
+                    feedbackErrorMessage.style.display = 'block';
+                    feedbackTableBody.innerHTML = '<tr><td colspan="4">Error loading feedback.</td></tr>';
+                    return;
+                }
+
+                const feedbackData = await response.json();
+                if (feedbackData.length === 0 && currentFeedbackPage > 0) {
+                    currentFeedbackPage--;
+                    await loadFeedback();
+                    return;
+                }
+                populateFeedbackTable(feedbackData);
+
+
+            } catch (error) {
+                feedbackErrorMessage.textContent = "Error loading feedback. Please check console.";
+                feedbackErrorMessage.style.display = 'block';
+                feedbackTableBody.innerHTML = '<tr><td colspan="4">Error loading feedback.</td></tr>';
+                console.error("Error fetching feedback:", error);
+            }
+        }
+
+        function populateFeedbackTable(feedbackData) {
+            feedbackTableBody.innerHTML = '';
+            if (feedbackData.length === 0) {
+                feedbackTableBody.innerHTML = '<tr><td colspan="4">No feedback found.</td></tr>';
+                return;
+            }
+
+            feedbackData.forEach(feedback => {
+                const row = feedbackTableBody.insertRow();
+                row.insertCell(0).textContent = feedback.id;
+                row.insertCell(1).textContent = feedback.username;
+                row.insertCell(2).textContent = feedback.comment;
+                row.insertCell(3).textContent = new Date(feedback.created_at).toLocaleString();
+            });
+
+            prevFeedbackButton.disabled = currentFeedbackPage === 0;
+            nextFeedbackButton.disabled = feedbackData.length < feedbackPerPage;
+        }
+
+
+        prevFeedbackButton.addEventListener('click', async () => {
+            if (currentFeedbackPage > 0) {
+                currentFeedbackPage--;
+                await loadFeedback();
+            }
+        });
+
+        nextFeedbackButton.addEventListener('click', async () => {
+            currentFeedbackPage++;
+            await loadFeedback();
+        });
+
+
+        // --- Initial Check for Admin Token ---
+        // For simplicity, always start at admin login for this example
+        loginContainer.style.display = 'flex';
+        adminAppContainer.style.display = 'none';
+
+
+    </script>
+</body>
+</html>
