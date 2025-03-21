@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Name Gender Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 2rem 0 1rem;
+            color: var(--text-color);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(99, 102, 241, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .result-item {
+            background-color: #f8fafc;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .result-item p {
+            margin-bottom: 0.5rem;
+        }
+
+        .result-item p:last-child {
+            margin-bottom: 0;
+        }
+
+        .error-message {
+            display: none;
+            color: #ef4444;
+            background-color: #fee2e2;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+
+        .credits {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Name Gender Predictor</h1>
+
+        <div class="input-group">
+            <h2>Single Name Prediction</h2>
+            <label for="singleName">Enter a single name:</label>
+            <input type="text" id="singleName" name="singleName" placeholder="e.g., Sakshi">
+            <button id="predictSingleButton">Predict Gender</button>
+        </div>
+
+        <div class="input-group">
+            <h2>Batch Name Prediction</h2>
+            <label for="batchNames">Enter names (comma-separated):</label>
+            <textarea id="batchNames" name="batchNames" rows="4" placeholder="e.g., Sakshi, Sameer, Shweta"></textarea>
+            <button id="predictBatchButton">Predict Multiple Names</button>
+        </div>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            <p>Analyzing names...</p>
+        </div>
+
+        <div id="results">
+            <h2>Results</h2>
+            <div id="singleResult"></div>
+            <div id="batchResults"></div>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="credits">
+            <p>Powered by <strong>D SAKSHI</strong> (MCA Final Year BIT Durg, Chhattisgarh)</p>
+            <p>© SlimShadow Org. All Rights Reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "https://sameernotes-gender-prediction-space.hf.space";
+        
+        // Elements
+        const singleNameInput = document.getElementById('singleName');
+        const predictSingleButton = document.getElementById('predictSingleButton');
+        const singleResultDiv = document.getElementById('singleResult');
+        const batchNamesInput = document.getElementById('batchNames');
+        const predictBatchButton = document.getElementById('predictBatchButton');
+        const batchResultsDiv = document.getElementById('batchResults');
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const loadingDiv = document.getElementById('loading');
+
+        // Single Prediction
+        predictSingleButton.addEventListener('click', async () => {
+            const name = singleNameInput.value.trim();
+            
+            if (!name) {
+                showError("Please enter a name.");
+                return;
+            }
+
+            hideError();
+            showLoading();
+            singleResultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/predict_single?name=${encodeURIComponent(name)}&threshold=0.5`);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    showError(`Error: ${errorData.detail || 'An unexpected error occurred.'}`);
+                    return;
+                }
+
+                const data = await response.json();
+                displaySingleResult(data);
+            } catch (error) {
+                showError("An error occurred during prediction. Please try again.");
+                console.error("Prediction error:", error);
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // Batch Prediction
+        predictBatchButton.addEventListener('click', async () => {
+            const namesString = batchNamesInput.value.trim();
+            const names = namesString.split(',').map(name => name.trim()).filter(name => name !== "");
+
+            if (names.length === 0) {
+                showError("Please enter at least one valid name.");
+                return;
+            }
+
+            hideError();
+            showLoading();
+            batchResultsDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ names: names, threshold: 0.5 })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    showError(`Error: ${errorData.detail || 'An unexpected error occurred.'}`);
+                    return;
+                }
+
+                const data = await response.json();
+                displayBatchResults(data);
+            } catch (error) {
+                showError("An error occurred during prediction. Please try again.");
+                console.error("Prediction error:", error);
+            } finally {
+                hideLoading();
+            }
+        });
+
+        function displaySingleResult(data) {
+            const resultHTML = `
+                <div class="result-item">
+                    <p><strong>Name:</strong> ${data.name}</p>
+                    <p><strong>Predicted Gender:</strong> ${data.predicted_gender}</p>
+                    <p><strong>Male Probability:</strong> ${data.male_probability.toFixed(2)}</p>
+                    <p><strong>Confidence:</strong> ${data.confidence.toFixed(2)}</p>
+                </div>
+            `;
+            singleResultDiv.innerHTML = resultHTML;
+        }
+
+        function displayBatchResults(data) {
+            let resultsHTML = '';
+            for (const prediction of data.predictions) {
+                resultsHTML += `
+                    <div class="result-item">
+                        <p><strong>Name:</strong> ${prediction.name}</p>
+                        <p><strong>Predicted Gender:</strong> ${prediction.predicted_gender}</p>
+                        <p><strong>Male Probability:</strong> ${prediction.male_probability.toFixed(2)}</p>
+                        <p><strong>Confidence:</strong> ${prediction.confidence.toFixed(2)}</p>
+                    </div>
+                `;
+            }
+            batchResultsDiv.innerHTML = resultsHTML;
+        }
+
+        function showError(message) {
+            errorMessageDiv.textContent = message;
+            errorMessageDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            errorMessageDiv.style.display = 'none';
+        }
+
+        function showLoading() {
+            loadingDiv.style.display = 'block';
+        }
+
+        function hideLoading() {
+            loadingDiv.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
